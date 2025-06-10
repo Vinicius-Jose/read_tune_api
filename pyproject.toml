@@ -1,0 +1,30 @@
+[project]
+name = "book-playlist-api"
+version = "0.1.0"
+description = "An API to create playlists on spotify based on a book"
+authors = [
+    {name = "Vinicius José",email = "vinijosenog@hotmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "langgraph (>=0.4.8,<0.5.0)",
+    "langchain-community (>=0.3.24,<0.4.0)",
+    "langchain-groq (>=0.3.2,<0.4.0)",
+    "fastapi (>=0.115.12,<0.116.0)",
+    "uvicorn (>=0.34.3,<0.35.0)",
+    "python-dotenv (>=1.1.0,<2.0.0)",
+    "wikipedia (>=1.4.0,<2.0.0)"
+]
+
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+pytest = "^8.4.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
