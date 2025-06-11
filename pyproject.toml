@@ -1,6 +1,6 @@
 [project]
 name = "book-playlist-api"
-version = "0.1.0"
+version = "1.0.0"
 description = "An API to create playlists on spotify based on a book"
 authors = [
     {name = "Vinicius José",email = "vinijosenog@hotmail.com"}

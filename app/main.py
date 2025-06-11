@@ -1,7 +1,6 @@
 from fastapi import Depends, FastAPI
 from dotenv import load_dotenv
 
-
 from app.controllers.spotify import router as spotify_router
 from app.controllers.llm import router as llm_router
 from app.controllers.books import router as book_router
@@ -16,7 +15,7 @@ from app.controllers.user import (
 load_dotenv("./.env")
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, title="ReadTune", version="1.0.0")
 app.include_router(
     spotify_router,
     dependencies=[Depends(get_current_active_user), Depends(check_admin)],
