@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel, Field
+from sqlmodel import SQLModel, Field as SQLField
 
 
 class Song(BaseModel):
@@ -33,3 +34,20 @@ class BookResponse(BaseModel):
     categories: Optional[list[str]] = Field(description="Categories")
     thumbnail: Optional[str] = Field(description="URL with the tumbnail")
     language: str = Field(description="Language")
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
+
+
+class User(SQLModel, table=True):
+    username: str = SQLField(nullable=False)
+    email: str = SQLField(nullable=False, primary_key=True)
+    full_name: str = SQLField(nullable=False)
+    password: str = SQLField(nullable=False)
+    admin: bool = SQLField(nullable=False, default=False)

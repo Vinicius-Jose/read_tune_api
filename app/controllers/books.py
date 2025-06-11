@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.models.models import BookResponse
 from app.services.google_books import GoogleBooksAPI
 
-router = APIRouter(prefix="/books")
+router = APIRouter(prefix="/books", tags=["books"])
 
 
 @router.get("/")

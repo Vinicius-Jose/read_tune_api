@@ -1,3 +1,4 @@
+import os
 from time import sleep
 from app.controllers.llm import get_volume_google_books, save_playlist
 from fastapi.testclient import TestClient
@@ -5,6 +6,8 @@ from app.main import app
 from app.models.models import Playlist, Song
 from app.services.spotify import SpotifyAPI
 import pytest
+
+from tests.test_main import authenticate
 
 client = TestClient(app)
 
@@ -48,5 +51,18 @@ def test_get_playlist(playlist_style: str, min_songs: str, max_songs: int) -> No
         "min_songs": min_songs,
         "max_songs": max_songs,
     }
-    response = client.get(f"/llm/{volume_id}", params=params)
+    headers = authenticate(os.environ["EMAIL_CLIENT"], os.environ["PWD_CLIENT"])
+    response = client.get(f"/llm/{volume_id}", params=params, headers=headers)
     assert response.status_code == 200
+
+
+def test_get_playlist_unauthorized() -> None:
+    volume_id = "HB-OEAAAQBAJ"
+    params = {
+        "playlist_style": "Classical",
+        "min_songs": 1,
+        "max_songs": 2,
+    }
+
+    response = client.get(f"/llm/{volume_id}", params=params)
+    assert response.status_code == 401
