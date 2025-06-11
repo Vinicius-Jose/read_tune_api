@@ -97,3 +97,10 @@ class SpotifyAPI:
         url = f"{self.url}playlists/{playlist_id}"
         response = requests.get(url, headers=self.__headers)
         return response.json()
+
+    def get_playlists_user(self, user_id: str, limit: int = 10) -> dict:
+        self.get_token()
+        url = f"{self.url}users/{user_id}/playlists"
+        params = {"limit": limit}
+        response = requests.get(url, headers=self.__headers, params=params)
+        return response.json()

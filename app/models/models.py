@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -28,8 +29,7 @@ class BookResponse(BaseModel):
     title: str = Field(description="Title of the volume/book")
     authors: list[str] = Field(description="List of authors")
     description: str = Field(description="Description of the volume")
-    description: list[str] = Field(description="Description of the volume")
     isbn: str = Field(description="ISBN 13")
-    categories: list[str] = Field(description="Categories")
-    thumbnail: str = Field(description="URL with the tumbnail")
+    categories: Optional[list[str]] = Field(description="Categories")
+    thumbnail: Optional[str] = Field(description="URL with the tumbnail")
     language: str = Field(description="Language")

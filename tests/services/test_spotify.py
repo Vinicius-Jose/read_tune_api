@@ -90,3 +90,11 @@ def test_get_playlist() -> None:
     playlist_id = "741HfcYMK871cpb3gNXBs9"
     response = spotify.get_playlist(playlist_id)
     assert response.get("name")
+
+
+def test_get_playlists_user() -> None:
+    spotify = SpotifyAPI()
+    user = spotify.get_current_user()
+    user_id = user["id"]
+    response = spotify.get_playlists_user(user_id)
+    assert isinstance(response.get("items"), list)
