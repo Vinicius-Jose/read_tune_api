@@ -66,3 +66,12 @@ def test_get_playlist_unauthorized() -> None:
 
     response = client.get(f"/llm/{volume_id}", params=params)
     assert response.status_code == 401
+
+
+def test_get_styles() -> None:
+    headers = authenticate(os.environ["EMAIL_CLIENT"], os.environ["PWD_CLIENT"])
+    response = client.get("/llm/style", headers=headers)
+    assert response.status_code == 200
+    response = response.json()
+    assert isinstance(response, list)
+    assert tuple(response[0].keys()) == ("name", "description")

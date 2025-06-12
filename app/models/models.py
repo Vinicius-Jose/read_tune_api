@@ -3,6 +3,11 @@ from pydantic import BaseModel, Field
 from sqlmodel import SQLModel, Field as SQLField
 
 
+class Style(BaseModel):
+    name: str = Field(description="Name of the style")
+    description: str = Field(description="Description of the style")
+
+
 class Song(BaseModel):
     artist_name: str = Field(description="Name of the singer")
     song_name: str = Field(description="Name of the song")

@@ -1,15 +1,24 @@
 import uuid
-from app.models.models import Playlist, PlaylistResponse
+from app.models.models import Playlist, PlaylistResponse, Style
 from app.models.states import OverallState
 from app.services.google_books import GoogleBooksAPI
 from app.services.llm_langgraph import LLMGraph
 from app.services.spotify import SpotifyAPI
 from fastapi import APIRouter
+from app.utils.prompts import styles
 
 router = APIRouter(
     prefix="/llm",
     tags=["llm"],
 )
+
+
+@router.get("/style")
+def get_style() -> list[Style]:
+    response = []
+    for key, value in styles.items():
+        response.append(Style(name=key, description=value))
+    return response
 
 
 @router.get("/{volume_id}")
