@@ -4,7 +4,9 @@ WORKDIR /app
 
 COPY . /app
 
-RUN pip install poetry && poetry install --without dev
+RUN pip install poetry \
+    && poetry install --without dev \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 EXPOSE 8000
 
