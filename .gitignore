@@ -197,4 +197,5 @@ cython_debug/
 .vscode
 
 #SQLite
+./database.db
 database.db
