@@ -19,9 +19,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-sqlite_url = os.environ["SQL_URL"]
-connect_args = {"check_same_thread": False}
-engine = create_engine(sqlite_url, connect_args=connect_args)
+sql_url = os.environ["SQL_URL"]
+connect_args = {}
+if "sqlite" in sql_url:
+    connect_args = {"check_same_thread": False}
+engine = create_engine(sql_url, connect_args=connect_args)
 
 router = APIRouter()
 
