@@ -10,7 +10,12 @@ class GoogleBooksAPI:
 
     def search_volume(self, search_query: str, max_results: int = 5) -> dict:
         url = f"{self.url}volumes/"
-        params = {"q": search_query, "key": self.key, "maxResults": max_results}
+        params = {
+            "q": search_query,
+            "key": self.key,
+            "maxResults": max_results,
+            "printType": "BOOKS",
+        }
         response = requests.get(url, params=params)
         return response.json()
 

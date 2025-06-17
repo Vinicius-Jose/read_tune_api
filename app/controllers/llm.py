@@ -4,7 +4,7 @@ from app.models.states import OverallState
 from app.services.google_books import GoogleBooksAPI
 from app.services.llm_langgraph import LLMGraph
 from app.services.spotify import SpotifyAPI
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, status
 from app.utils.prompts import styles
 
 router = APIRouter(
@@ -56,6 +56,11 @@ def get_volume_google_books(volume_id: str) -> OverallState:
     api = GoogleBooksAPI()
     volume = api.get_volume(volume_id)
     volume_info: dict = volume.get("volumeInfo")
+    if not volume_info:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Volume not found",
+        )
     title: str = volume_info.get("title")
     authors: str = " ".join(volume_info.get("authors"))
     isbn_list: list[dict] = volume_info.get("industryIdentifiers")

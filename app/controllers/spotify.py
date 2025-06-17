@@ -15,7 +15,7 @@ def check_environment():
     if os.environ.get("ENVIRONMENT", "dev") != "dev":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="This method is not allowd in production",
+            detail="This method is not allowed in production",
         )
 
 
