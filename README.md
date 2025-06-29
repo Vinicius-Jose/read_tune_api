@@ -1,4 +1,4 @@
-# ReadTune
+# ReadTune API
 ![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
 ![LangGraph](https://img.shields.io/badge/LangChain-0.5.0-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.116.0-blue)
