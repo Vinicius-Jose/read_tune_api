@@ -80,7 +80,7 @@ The project uses some techniques of Retrieval-Augmented Generation (RAG) to crea
     - **EMAIL_ADMIN** & **PWD_ADMIN** & **EMAIL_CLIENT** & **PWD_CLIENT**: those variables are only needed for tests purposes, so if will not execute the tests, you don't need to set this varibles, else put the admin email and password and client email and password values
 
 - **Install dependencies:**
-    - You can run like any other Django Application, but firstly install poetry, on your cli:
+    - You can run like any other FastAPI Application, but firstly install poetry, on your cli:
         ```bash
         pip install poetry
         ```
@@ -99,10 +99,10 @@ The project uses some techniques of Retrieval-Augmented Generation (RAG) to crea
 ## Running in docker
  - First build the image:
     ```bash
-    docker build --pull --rm -f "Dockerfile" -t readtune:latest "."
+    docker build --pull --rm -f "Dockerfile" -t read_tune_api:latest "."
     ```
     - Run the image:
     ```bash
-    docker run -dti -p 8000:8000 --env-file .env  --name readtune_image readtune 
+    docker run -dti -p 8000:8000 --env-file .env  --name read_tune_api_image read_tune_api 
     ```
     - Open this link on your browser[API Documentation](http://127.0.0.1:8000/docs)
