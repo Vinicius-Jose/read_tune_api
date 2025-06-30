@@ -5,12 +5,12 @@
 ![OAuth 2.0](https://img.shields.io/badge/OAuth%202.0-enabled-green)
 [![License](https://img.shields.io/badge/License-Apache%202.0-orange)](./LICENSE)
 
-## What is this project?
+## 🎵 Read Tune API
  - This is an API with the purpose to create a Spotify Playlist optimized to be listened to during the reading of a book.
 The project uses some techniques of Retrieval-Augmented Generation (RAG) to create the playlist.
 
 ## Where can I access this API?
- - At the moment, the API is not publicly accessible, but it will be available online soon. If you wish know more about contact me here or on my linkedin
+ - Currently, the API is not publicly accessible. It will be available online soon. If you'd like to know more, feel free to contact me here or via [Linkedin](https://www.linkedin.com/in/vin%C3%ADcius-jos%C3%A9-pierri-nogueira-341aa2175/)
 
 ## Which technologies were used?
  -  This project was built using:
@@ -97,12 +97,15 @@ The project uses some techniques of Retrieval-Augmented Generation (RAG) to crea
     - For more information on how to use Poetry please visit this [link](https://python-poetry.org/docs/basic-usage/).
 
 ## Running in docker
- - First build the image:
+ - First build the Docker image:
     ```bash
     docker build --pull --rm -f "Dockerfile" -t read_tune_api:latest "."
     ```
-    - Run the image:
+    - Run the container:
     ```bash
     docker run -dti -p 8000:8000 --env-file .env  --name read_tune_api_image read_tune_api 
     ```
     - Open this link on your browser[API Documentation](http://127.0.0.1:8000/docs)
+
+## 📄 License
+- This project is licensed under the [Apache 2.0 License](./LICENSE).
