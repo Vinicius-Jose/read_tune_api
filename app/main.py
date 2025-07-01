@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from app.controllers.spotify import router as spotify_router
@@ -19,6 +20,14 @@ load_dotenv("./.env")
 
 
 app = FastAPI(lifespan=lifespan, title="ReadTune", version=config.get("version"))
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://read-tune.onrender.com"],  # Ou ["*"] para testes
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],  # Permite todos os cabeçalhos, incluindo Authorization
+)
 
 app.include_router(spotify_router)
 app.include_router(llm_router, dependencies=[Depends(get_current_active_user)])
