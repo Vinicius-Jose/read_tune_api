@@ -23,10 +23,10 @@ app = FastAPI(lifespan=lifespan, title="ReadTune", version=config.get("version")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://read-tune.onrender.com"],  # Ou ["*"] para testes
+    allow_origins=["https://read-tune.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],  # Permite todos os cabeçalhos, incluindo Authorization
+    allow_headers=["*"],
 )
 
 app.include_router(spotify_router)
