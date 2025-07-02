@@ -23,7 +23,9 @@ sql_url = os.environ["SQL_URL"]
 connect_args = {}
 if "sqlite" in sql_url:
     connect_args = {"check_same_thread": False}
-engine = create_engine(sql_url, connect_args=connect_args)
+engine = create_engine(
+    sql_url, pool_pre_ping=True, pool_recycle=1800, connect_args=connect_args
+)
 
 router = APIRouter()
 
