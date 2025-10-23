@@ -10,7 +10,7 @@
 The project uses some techniques of Retrieval-Augmented Generation (RAG) to create the playlist.
 
 ## Where can I access this API?
- - The API is public available [here](https://cruel-juli-robot-book-playlist-a101d70b.koyeb.app/) If you'd like to know more or want to test the API in production, feel free to contact me here or via [Linkedin](https://www.linkedin.com/in/vin%C3%ADcius-jos%C3%A9-pierri-nogueira-341aa2175/)
+ - The API is public available [here](https://exact-silva-readtune-cf5df001.koyeb.app/docs/) If you'd like to know more or want to test the API in production, feel free to contact me here or via [Linkedin](https://www.linkedin.com/in/vin%C3%ADcius-jos%C3%A9-pierri-nogueira-341aa2175/)
 
 ## Which technologies were used?
  -  This project was built using:
