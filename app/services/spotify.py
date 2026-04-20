@@ -2,8 +2,11 @@ import requests
 import os
 import base64
 
+from app.models.models import PlaylistResponse, SearchItem
+from app.services.streaming import StreamingAPI
 
-class SpotifyAPI:
+
+class SpotifyAPI(StreamingAPI):
     def __init__(self) -> None:
         self.url: str = "https://api.spotify.com/v1/"
         self.__headers: dict = {}
@@ -52,22 +55,24 @@ class SpotifyAPI:
         self.refresh_token = response_json.get("refresh_token", self.refresh_token)
         return response_json
 
-    def search(self, query: str, search_type: list[str] = ["track"], limit=5) -> dict:
+    def search(
+        self, query: str, search_type: list[str] = ["track"], limit=5
+    ) -> list[SearchItem]:
         self.get_token()
         url = f"{self.url}search"
         params = {"q": query, "type": search_type, "limit": limit}
         response = requests.get(url, headers=self.__headers, params=params)
-        return response.json()
+        return self.__normalize_search_result(response.json())
 
-    def get_current_user(self) -> dict:
+    def get_current_user(self) -> str:
         self.get_token()
         url = f"{self.url}me"
         response = requests.get(url, headers=self.__headers)
-        return response.json()
+        return response.json()["id"]
 
     def create_playlist(
         self, user_id: str, name: str, description: str, public: bool = False
-    ) -> dict:
+    ) -> PlaylistResponse:
         self.get_token()
         url = f"{self.url}users/{user_id}/playlists"
         payload = {
@@ -76,7 +81,10 @@ class SpotifyAPI:
             "public": public,
         }
         response = requests.post(url, headers=self.__headers, json=payload)
-        return response.json()
+        playlist = response.json()
+        return PlaylistResponse(
+            id=playlist["id"], link=playlist["external_urls"]["spotify"]
+        )
 
     def add_tracks_to_playlist(self, playlist_id: str, tracks_uris: list[str]) -> dict:
         self.get_token()
@@ -92,11 +100,14 @@ class SpotifyAPI:
         url = f"{self.url}playlists/{playlist_id}/followers"
         requests.delete(url, headers=self.__headers)
 
-    def get_playlist(self, playlist_id: str) -> dict:
+    def get_playlist(self, playlist_id: str) -> PlaylistResponse:
         self.get_token()
         url = f"{self.url}playlists/{playlist_id}"
         response = requests.get(url, headers=self.__headers)
-        return response.json()
+        playlist = response.json()
+        return PlaylistResponse(
+            id=playlist["id"], link=playlist["external_urls"]["spotify"]
+        )
 
     def get_playlists_user(self, user_id: str, limit: int = 10) -> dict:
         self.get_token()
@@ -104,3 +115,24 @@ class SpotifyAPI:
         params = {"limit": limit}
         response = requests.get(url, headers=self.__headers, params=params)
         return response.json()
+
+    def __normalize_search_result(self, data: dict) -> list[SearchItem]:
+        items = []
+        content_type = list(data.keys())[0]
+        for item in data[content_type]:
+            authors = None
+            content_id = item.get("id")
+            if content_type == "track":
+                authors = [author.get("name").lower() for author in item["artists"]]
+                content_id = item.get("uri")
+            elif content_type == "playlists":
+                authors = [item["owner"].get("display_name")]
+            items.append(
+                SearchItem(
+                    content_id=content_id,
+                    content_type=content_type,
+                    authors=authors,
+                    title=item["name"],
+                )
+            )
+        return items

@@ -3,9 +3,12 @@ from app.models.models import Playlist, PlaylistResponse, Style
 from app.models.states import OverallState
 from app.services.google_books import GoogleBooksAPI
 from app.services.llm_langgraph import LLMGraph
-from app.services.spotify import SpotifyAPI
+
 from fastapi import APIRouter, HTTPException, status
+
+from app.services.streaming import StreamingAPI
 from app.utils.prompts import styles
+from app.controllers.streaming import Provider, StreamingAPIFactory
 
 router = APIRouter(
     prefix="/llm",
@@ -27,28 +30,25 @@ def get_playlist(
     playlist_style: str = "Any Style",
     min_songs: int = 5,
     max_songs: int = 10,
+    provider: Provider = Provider.youtube,
 ) -> PlaylistResponse:
     volume = get_volume_google_books(volume_id)
     volume["playlist_style"] = playlist_style
     volume["max_songs"] = max_songs
     volume["min_songs"] = min_songs
-    spotify = SpotifyAPI()
+    streaming = StreamingAPIFactory().build(provider)
     query = f"{volume['book_title']} - {volume['book_authors']} - {volume['isbn']} - {volume['playlist_style']}"
-    search = spotify.search(query, ["playlist"])
-    playlists = search["playlists"]["items"]
-
+    playlists = streaming.search(query, ["playlist"], limit=1)
     if len(playlists) > 0:
         playlist = playlists[0]
-        if playlist["name"].lower() == query.lower():
-            response = PlaylistResponse(
-                link=playlist["external_urls"]["spotify"], id=playlist["id"]
-            )
-            return response
+        if playlist.title.lower() == query.lower():
+            playlist = streaming.get_playlist(playlist.content_id)
+            return playlist
 
     graph = LLMGraph()
     thread_id = str(uuid.uuid4())
     playlist = graph.execute_graph(thread_id, volume)
-    response = save_playlist(playlist["playlist"], spotify)
+    response = save_playlist(playlist["playlist"], streaming)
     return response
 
 
@@ -79,24 +79,21 @@ def get_volume_google_books(volume_id: str) -> OverallState:
     )
 
 
-def save_playlist(playlist: Playlist, api: SpotifyAPI) -> PlaylistResponse:
-    uris = []
+def save_playlist(playlist: Playlist, api: StreamingAPI) -> PlaylistResponse:
+    tracks_ids = []
     for song in playlist.song_list:
         query = f"{song.artist_name} {song.song_name}"
-        search_response = api.search(query)
-        tracks = search_response["tracks"]["items"]
+        tracks = api.search(query, limit=1)
         if len(tracks) > 0:
             track = tracks[0]
-            artists = [artist.get("name").lower() for artist in track["artists"]]
-            if (
-                song.song_name.lower() in track["name"].lower()
-                and song.artist_name.lower() in artists
+            if song.song_name.lower() in track.title.lower() and any(
+                song.artist_name.lower() in author.lower() for author in track.authors
             ):
-                uris.append(track["uri"])
-    user_id = api.get_current_user()["id"]
-    playlist_spotify = api.create_playlist(user_id, playlist.name, playlist.description)
-    api.add_tracks_to_playlist(playlist_spotify["id"], uris)
-    playlist_response = PlaylistResponse(
-        id=playlist_spotify["id"], link=playlist_spotify["external_urls"]["spotify"]
+                tracks_ids.append(track.content_id)
+    user_id = api.get_current_user()
+    playlist_response = api.create_playlist(
+        user_id, playlist.name, playlist.description
     )
+    api.add_tracks_to_playlist(playlist.id, tracks_ids)
+
     return playlist_response

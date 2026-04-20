@@ -199,3 +199,6 @@ cython_debug/
 #SQLite
 ./database.db
 database.db
+
+#Secret google files
+*google.json
