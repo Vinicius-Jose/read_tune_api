@@ -79,6 +79,7 @@ The project uses some techniques of Retrieval-Augmented Generation (RAG) to crea
     - **SQL_URL**: URL to connect to a SQL database, the default value is sqlite:///database.db, this default URL will connect to SQLite database.
     - **EMAIL_ADMIN** & **PWD_ADMIN** & **EMAIL_CLIENT** & **PWD_CLIENT**: those variables are only needed for tests purposes, so if will not execute the tests, you don't need to set this varibles, else put the admin email and password and client email and password values
 
+
 - **Install dependencies:**
     - You can run like any other FastAPI Application, but firstly install poetry, on your cli:
         ```bash
@@ -109,3 +110,10 @@ The project uses some techniques of Retrieval-Augmented Generation (RAG) to crea
 
 ## 📄 License
 - This project is licensed under the [Apache 2.0 License](./LICENSE).
+
+## Update v1.1.0
+- Added support for the YouTube API.
+    - To use the YouTube API, you will need the following environment variables inside your .env file:
+        - GOOGLE_JSON: The name of the file containing the secrets. You can see how to generate one in the Google documentation here.
+        - GOOGLE_TOKEN_JSON_FILE: The refresh token JSON file.
+        - You can choose which streaming provider will be used when calling the LLM endpoint by passing the provider variable; it can be "spotify" or "youtube".
