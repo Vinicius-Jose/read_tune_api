@@ -91,4 +91,4 @@ def test_get_playlists_user() -> None:
     user = spotify.get_current_user()
     user_id = user["id"]
     response = spotify.get_playlists_user(user_id)
-    assert isinstance(response.get("items"), list)
+    assert len(response) > 0

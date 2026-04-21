@@ -94,6 +94,6 @@ def save_playlist(playlist: Playlist, api: StreamingAPI) -> PlaylistResponse:
     playlist_response = api.create_playlist(
         user_id, playlist.name, playlist.description
     )
-    api.add_tracks_to_playlist(playlist.id, tracks_ids)
+    api.add_tracks_to_playlist(playlist_response.id, tracks_ids)
 
     return playlist_response

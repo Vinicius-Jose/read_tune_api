@@ -7,6 +7,8 @@ from google_auth_oauthlib.flow import Flow
 
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build, Resource
+from googleapiclient.errors import HttpError
+import time
 
 
 class YoutubeAPI(StreamingAPI):
@@ -82,7 +84,9 @@ class YoutubeAPI(StreamingAPI):
             },
         )
         data = request.execute()
-        return PlaylistResponse(id=data["id"], link=data["player"]["embedHtml"])
+        return PlaylistResponse(
+            id=data["id"], link=data["player"]["embedHtml"], title=name
+        )
 
     def add_tracks_to_playlist(
         self, playlist_id: str, tracks_uris: str | list[str]
@@ -91,16 +95,22 @@ class YoutubeAPI(StreamingAPI):
         if isinstance(tracks_uris, str):
             tracks_uris = [tracks_uris]
         for track in tracks_uris:
-            request = self.__youtube.playlistItems().insert(
-                part="snippet",
-                body={
-                    "snippet": {
-                        "playlistId": playlist_id,
-                        "resourceId": {"kind": "youtube#video", "videoId": track},
-                    }
-                },
-            )
-        return request.execute()
+            try:
+                request = self.__youtube.playlistItems().insert(
+                    part="snippet",
+                    body={
+                        "snippet": {
+                            "playlistId": playlist_id,
+                            "resourceId": {"kind": "youtube#video", "videoId": track},
+                        }
+                    },
+                )
+                request.execute()
+            except HttpError as error:
+                time.sleep(1)
+                print(error)
+
+        return {"Playlist": playlist_id}
 
     def unfollow_playlist(self, playlist_id: str) -> None:
         self.__authenticate()
@@ -115,12 +125,23 @@ class YoutubeAPI(StreamingAPI):
         data = request.execute()[0]
         return PlaylistResponse(id=data["id"], link=data["player"]["embedHtml"])
 
-    def get_playlists_user(self, user_id: str, limit: int = 10) -> dict:
+    def get_playlists_user(
+        self, user_id: str, limit: int = 10
+    ) -> list[PlaylistResponse]:
         self.__authenticate()
         request = self.__youtube.playlists().list(
             part="snippet,id,player", channelId=user_id, maxResults=limit
         )
-        return request.execute()
+        data = request.execute()
+        playlists = []
+        for item in data.get("items"):
+            playlist = PlaylistResponse(
+                id=item.get("id"),
+                link=item.get("player", {}).get("embedHtml", ""),
+                title=item.get("snippet").get("title"),
+            )
+            playlists.append(playlist)
+        return playlists
 
     def __normalize_search_result(
         self, data: dict, search_type: str

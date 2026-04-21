@@ -83,7 +83,7 @@ class SpotifyAPI(StreamingAPI):
         response = requests.post(url, headers=self.__headers, json=payload)
         playlist = response.json()
         return PlaylistResponse(
-            id=playlist["id"], link=playlist["external_urls"]["spotify"]
+            id=playlist["id"], link=playlist["external_urls"]["spotify"], title=name
         )
 
     def add_tracks_to_playlist(self, playlist_id: str, tracks_uris: list[str]) -> dict:
@@ -109,12 +109,23 @@ class SpotifyAPI(StreamingAPI):
             id=playlist["id"], link=playlist["external_urls"]["spotify"]
         )
 
-    def get_playlists_user(self, user_id: str, limit: int = 10) -> dict:
+    def get_playlists_user(
+        self, user_id: str, limit: int = 10
+    ) -> list[PlaylistResponse]:
         self.get_token()
         url = f"{self.url}users/{user_id}/playlists"
         params = {"limit": limit}
         response = requests.get(url, headers=self.__headers, params=params)
-        return response.json()
+        data = response.json()
+        playlists = []
+        for item in data["items"]:
+            playlist = PlaylistResponse(
+                id=item.get("id"),
+                link=item["external_urls"]["spotify"],
+                title=item["name"],
+            )
+            playlists.append(playlist)
+        return playlists
 
     def __normalize_search_result(self, data: dict) -> list[SearchItem]:
         items = []

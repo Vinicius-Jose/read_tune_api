@@ -37,13 +37,7 @@ def spotify_callback(code: str) -> dict:
 )
 def spotify_playlist() -> list[PlaylistResponse]:
     spotify = SpotifyAPI()
-    user = spotify.get_current_user()
-    user_id = user["id"]
+    user_id = spotify.get_current_user()
     response = spotify.get_playlists_user(user_id)
-    playlists = []
-    for item in response["items"]:
-        playlist = PlaylistResponse(
-            id=item.get("id"), link=item["external_urls"]["spotify"]
-        )
-        playlists.append(playlist)
-    return playlists
+
+    return response

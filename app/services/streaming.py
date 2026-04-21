@@ -36,5 +36,7 @@ class StreamingAPI(ABC):
         pass
 
     @abstractmethod
-    def get_playlists_user(self, user_id: str, limit: int = 10) -> dict:
+    def get_playlists_user(
+        self, user_id: str, limit: int = 10
+    ) -> list[PlaylistResponse]:
         pass

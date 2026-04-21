@@ -65,4 +65,4 @@ def test_get_playlists_user() -> None:
     youtube = YoutubeAPI()
     user_id = "UCfM3zsQsOnfWNUppiycmBuw"
     response = youtube.get_playlists_user(user_id=user_id)
-    assert response.get("items", [{}])
+    assert len(response) > 0

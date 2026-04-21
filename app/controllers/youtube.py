@@ -16,14 +16,6 @@ router = APIRouter(
 )
 def youtube_playlist() -> list[PlaylistResponse]:
     youtube = YoutubeAPI()
-    user = youtube.get_current_user()
-    user_id = user["items"][0]["id"]
+    user_id = youtube.get_current_user()
     response = youtube.get_playlists_user(user_id)
-    playlists = []
-    for item in response["items"]:
-        playlist = PlaylistResponse(
-            id=item.get("id"),
-            link=item.get("player", {}).get("embedHtml", ""),
-        )
-        playlists.append(playlist)
-    return playlists
+    return response

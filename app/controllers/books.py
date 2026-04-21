@@ -14,13 +14,16 @@ def search(query: str, max_results: int = 5) -> list[BookResponse]:
     for item in volumes["items"]:
         isbn = ""
         volume_info: dict = item.get("volumeInfo")
+        title = volume_info.get("title")
+        if not title:
+            continue
         for isbn_item in volume_info.get("industryIdentifiers", []):
             if isbn_item.get("type") == "ISBN_13":
                 isbn = isbn_item.get("identifier")
                 break
         volume = BookResponse(
             volume_id=item.get("id"),
-            title=volume_info.get("title"),
+            title=title,
             authors=volume_info.get("authors", []),
             description=volume_info.get("description", ""),
             isbn=isbn,

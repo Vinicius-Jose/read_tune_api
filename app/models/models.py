@@ -28,6 +28,7 @@ class Playlist(BaseModel):
 class PlaylistResponse(BaseModel):
     id: str = Field(description="Id playlist")
     link: str = Field(description="Link to playlist")
+    title: str = Field(description="Playlist title")
 
 
 class BookResponse(BaseModel):
