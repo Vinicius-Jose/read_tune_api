@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from app.controllers.spotify import router as spotify_router
 from app.controllers.llm import router as llm_router
 from app.controllers.books import router as book_router
+from app.controllers.youtube import router as youtube_router
 from app.controllers.user import (
     get_current_active_user,
     lifespan,
@@ -30,6 +31,7 @@ app.add_middleware(
 )
 
 app.include_router(spotify_router)
+app.include_router(youtube_router)
 app.include_router(llm_router, dependencies=[Depends(get_current_active_user)])
 app.include_router(book_router, dependencies=[Depends(get_current_active_user)])
 app.include_router(user_router)

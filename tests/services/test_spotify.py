@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+from app.models.models import PlaylistResponse
 from app.services.spotify import SpotifyAPI
 
 load_dotenv("./.env")
@@ -15,12 +16,10 @@ def test_search_track() -> None:
     track_search = "We are the champions"
     artist_search = "Queen"
     response = spotify.search(f"{track_search} {artist_search}", search_type=["track"])
-    assert isinstance(response, dict)
-    tracks = response["tracks"]
-    items = tracks["items"]
-    track = items[0]
-    track_name = track["name"]
-    track_artist = track["artists"][0]["name"]
+    assert isinstance(response, list)
+    track = response[0]
+    track_name = track.title
+    track_artist = track.authors[0]
     assert track_search.lower() in track_name.lower()
     assert artist_search.lower() in track_artist.lower()
 
@@ -28,8 +27,8 @@ def test_search_track() -> None:
 def test_get_current_user() -> None:
     spotify = SpotifyAPI()
     response = spotify.get_current_user()
-    assert isinstance(response, dict)
-    assert response["id"]
+    assert isinstance(response, str)
+    assert response
 
 
 def test_create_playlist() -> None:
@@ -44,10 +43,7 @@ def test_create_playlist() -> None:
         description=playlist_description,
         public=False,
     )
-    assert isinstance(response, dict)
-    assert response["name"] == playlist_name
-    assert response["description"] == playlist_description
-    assert response["owner"]["id"] == user_id
+    assert isinstance(response, PlaylistResponse)
     spotify.unfollow_playlist(response["id"])
 
 
@@ -64,25 +60,23 @@ def test_create_and_add_tracks_playlist() -> None:
         public=False,
     )
     search_response = spotify.search("We are the champions", search_type=["track"])
-    tracks_uris.append(search_response["tracks"]["items"][0]["uri"])
+    tracks_uris.append(search_response[0].content_id)
     search_response = spotify.search("Rabbit Run Eminem", search_type=["track"])
-    tracks_uris.append(search_response["tracks"]["items"][0]["uri"])
+    tracks_uris.append(search_response[0].content_id)
     response = spotify.add_tracks_to_playlist(
-        playlist_id=response_playlist["id"], tracks_uris=tracks_uris
+        playlist_id=response_playlist.id, tracks_uris=tracks_uris
     )
     assert isinstance(response, dict)
     assert response["snapshot_id"]
-    spotify.unfollow_playlist(response_playlist["id"])
+    spotify.unfollow_playlist(response_playlist.id)
 
 
 def test_search_playlist() -> None:
     spotify = SpotifyAPI()
     playlist_name = "Lofi Girl - beats to relax/study to"
     response = spotify.search(playlist_name, search_type=["playlist"])
-    assert isinstance(response, dict)
-    playlists = response["playlists"]
-    items = playlists["items"]
-    assert items[0]["name"] == playlist_name
+    assert isinstance(response, list)
+    assert response[0].title == playlist_name
 
 
 def test_get_playlist() -> None:
@@ -97,4 +91,4 @@ def test_get_playlists_user() -> None:
     user = spotify.get_current_user()
     user_id = user["id"]
     response = spotify.get_playlists_user(user_id)
-    assert isinstance(response.get("items"), list)
+    assert len(response) > 0

@@ -26,8 +26,9 @@ class Playlist(BaseModel):
 
 
 class PlaylistResponse(BaseModel):
-    id: str = Field(description="Id playlist on spotify")
-    link: str = Field(description="Link to open spotify playlist")
+    id: str = Field(description="Id playlist")
+    link: str = Field(description="Link to playlist")
+    title: str = Field(description="Playlist title")
 
 
 class BookResponse(BaseModel):
@@ -56,3 +57,10 @@ class User(SQLModel, table=True):
     full_name: str = SQLField(nullable=False)
     password: str = SQLField(nullable=False)
     admin: bool = SQLField(nullable=False, default=False)
+
+
+class SearchItem(BaseModel):
+    content_id: str = Field("Item id")
+    content_type: str = Field("Type of the item(album,track etc)")
+    authors: list[str] = Field("Author(s) of the content")
+    title: str = Field("Title")
