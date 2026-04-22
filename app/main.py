@@ -24,7 +24,11 @@ app = FastAPI(lifespan=lifespan, title="ReadTune", version=config.get("version")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://read-tune.onrender.com"],
+    allow_origins=[
+        "https://read-tune.onrender.com",
+        "http://localhost:8081/",
+        "exp://192.168.15.5:8081",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
