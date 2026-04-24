@@ -4,7 +4,7 @@ from app.services.streaming import StreamingAPI
 from google.oauth2.credentials import Credentials
 
 from google_auth_oauthlib.flow import Flow
-
+from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build, Resource
 from googleapiclient.errors import HttpError
@@ -42,6 +42,7 @@ class YoutubeAPI(StreamingAPI):
             self.__credentials = Credentials.from_authorized_user_file(
                 os.environ.get("GOOGLE_TOKEN_JSON_FILE")
             )
+            self.__credentials.refresh(Request())
             self.__youtube: Resource = build(
                 "youtube", "v3", credentials=self.__credentials
             )
