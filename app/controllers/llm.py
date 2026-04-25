@@ -86,9 +86,12 @@ def save_playlist(playlist: Playlist, api: StreamingAPI) -> PlaylistResponse:
         tracks = api.search(query, limit=1)
         if len(tracks) > 0:
             track = tracks[0]
-            if song.song_name.lower() in track.title.lower() and any(
+            is_song_correct = song.song_name.lower() in track.title.lower()
+            is_author_in_authors = any(
                 song.artist_name.lower() in author.lower() for author in track.authors
-            ):
+            )
+            is_author_in_tilte = song.artist_name.lower() in track.title.lower()
+            if is_song_correct and (is_author_in_authors or is_author_in_tilte):
                 tracks_ids.append(track.content_id)
     user_id = api.get_current_user()
     playlist_response = api.create_playlist(
